@@ -1,13 +1,12 @@
 package net.cloudtecnologia.client;
 
+import net.cloudtecnologia.model.entity.BlueSoft;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import javax.swing.*;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
@@ -41,63 +40,51 @@ public class Chrome {
         return navegador;
     }
 
-    public void paginarTabela(WebDriver navegador) {
-
+    public List<BlueSoft> paginarTabela(WebDriver navegador) {
+        List<BlueSoft> listaObj = new ArrayList<>();
+        //
         Scanner ler = new Scanner(System.in);
         System.out.println("Pressione 'ENTER' para começar a paginação!");
         ler.next();
         int totalRegistros = 0;
         int max = 4644;
-        //
-        try {
-            BufferedWriter escreve = new BufferedWriter(new FileWriter((CAMINHO_TXT), true));
-            for (int i = 1; i <= max; i++) {
-                String info = navegador.findElement(By.xpath("//*[@id=\"formSaneamento:listaProdutosEmpresa_paginator_top\"]/span[1]")).getText();
-                System.out.println("Processando HTML:");
-                System.out.println(info);
-                //
-                List<WebElement> lista = navegador.findElement(By.className("ui-datatable-tablewrapper"))
-                        .findElements(By.tagName("tr"));
-                System.out.println("");
-                System.out.println("  INFO: ");
-                System.out.println("");
-                int cont = 0;
-                for (WebElement elemento : lista) {
-                    if (cont > 0) {
-                        totalRegistros++;
-                        List<WebElement> colunas = elemento.findElements(By.tagName("td"));
-                        //
-                        try {
-                            String linha = totalRegistros + " # BARRA:" + colunas.get(4).getText() +
-                                    " # DESCRIÇÃO:" + colunas.get(5).getText() +
-                                    " # NCM:" + colunas.get(6).getText() + " # CST: " + colunas.get(7).getText() +
-                                    " # ALIQ C: " + colunas.get(8).getText() + " # ALIQ R: " + colunas.get(9).getText();
-                            //
-                            escreve.write(linha.trim());
-                            escreve.newLine();
-                            escreve.flush();
-                            System.out.println(linha);
-                            //
-                        } catch (Exception e) {
-                            System.out.println("***Erro ao obter informações colunas***");
-                        }
+        for (int i = 1; i <= max; i++) {
+            String info = navegador.findElement(By.xpath("//*[@id=\"formSaneamento:listaProdutosEmpresa_paginator_top\"]/span[1]")).getText();
+            System.out.println("Processando HTML:");
+            System.out.println(info);
+            //
+            List<WebElement> lista = navegador.findElement(By.className("ui-datatable-tablewrapper"))
+                    .findElements(By.tagName("tr"));
+            System.out.println("");
+            System.out.println("  INFO: ");
+            System.out.println("");
+            int cont = 0;
+            for (WebElement elemento : lista) {
+                if (cont > 0) {
+                    totalRegistros++;
+                    List<WebElement> colunas = elemento.findElements(By.tagName("td"));
+                    //
+                    try {
+                        BlueSoft blu = new BlueSoft(colunas.get(4).getText(), colunas.get(5).getText(),
+                                colunas.get(6).getText(), colunas.get(7).getText(),
+                                colunas.get(8).getText(), colunas.get(9).getText());
+                        listaObj.add(blu);
+                        System.out.println(blu.toString());
+                    } catch (Exception e) {
+                        System.out.println("***Erro ao obter informações colunas***");
                     }
-                    cont++;
                 }
-                navegador.findElement(By.xpath("//*[@id=\"formSaneamento:listaProdutosEmpresa_paginator_top\"]/a[3]")).click();
-                System.out.println("");
-                System.out.println("Clicou na ABA: " + (i + 1));
-                System.out.println("");
-                System.out.println("---------------------------------------------------------------");
-                System.out.println("");
-                aguardarSeconds(10);
-            }//fim do laço
-            escreve.close();
-            JOptionPane.showMessageDialog(null, "Processo concluído!!!!");
-        } catch (IOException e) {
-            System.out.println("***Erro ao Escrever no Arquivo!***");
-            e.printStackTrace();
-        }
+                cont++;
+            }
+            navegador.findElement(By.xpath("//*[@id=\"formSaneamento:listaProdutosEmpresa_paginator_top\"]/a[3]")).click();
+            System.out.println("");
+            System.out.println("Clicou na ABA: " + (i + 1));
+            System.out.println("");
+            System.out.println("---------------------------------------------------------------");
+            System.out.println("");
+            aguardarSeconds(10);
+        }//fim do laço
+        return listaObj;
     }
 
 
