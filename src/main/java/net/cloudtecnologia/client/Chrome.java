@@ -20,12 +20,13 @@ public class Chrome {
     private static final String URL_SANEAMENTO_PRODUTOS = "http://wlcontabilidade.sytes.net:8080/wlgestao/paginas/saneamento/commom/produtossaneamento.jsf";
     private static final String USER = "anilson-asj";
     private static final String PASS = "115200";
-
     private int registros;
     private static final String TXT = "C:\\Users\\thiago.melo\\Desktop\\SANEAMENTO.txt";
 
-    WebDriver chrome;
+    private static final int INDEX_START = 15;
 
+    WebDriver chrome;
+    BufferedWriter escreve;
 
     public void confiugurarChrome() {
         System.setProperty("webdriver.chrome.driver",
@@ -50,30 +51,38 @@ public class Chrome {
         Scanner ler = new Scanner(System.in);
         System.out.println("Digite 'OK' para seguir!");
         ler.next();
-        try {
-            BufferedWriter escreve = new BufferedWriter(new FileWriter((TXT), true));
-            //
-            String maxStr = informacaoPaginaAtual();
-            maxStr = maxStr.substring(maxStr.indexOf("of") + 2, maxStr.length()).trim();
-            int max = Integer.parseInt(maxStr);
-            for (int index = 1; index <= max; index++) {
-                boolean processar = false;
-                while (processar == false) {
-                    String infoAtual = informacaoPaginaAtual();
-                    System.out.println("----------------------------( " + infoAtual + " )---------------------------- ");
-                    int pageAtual = retornarPaginaAtual();
-                    System.out.println("pageAtual: " + pageAtual);
-                    System.out.println("index:     " + index);
-                    if (index == pageAtual) {
-                        processar = true;
-                        System.out.println("Processar: " + processar);
-                        proximaPagina(index + 1);
-                    } else {
-                        System.out.println("  Processando novamente a página: " + index);
-                        proximaPagina(index);
-                    }
+        //
+        String maxStr = informacaoPaginaAtual();
+        maxStr = maxStr.substring(maxStr.indexOf("of") + 2, maxStr.length()).trim();
+        int max = Integer.parseInt(maxStr);
+        for (int index = INDEX_START; index <= max; index++) {
+            boolean processar = false;
+            while (processar == false) {
+                String infoAtual = informacaoPaginaAtual();
+                System.out.println("----------------------------( " + infoAtual + " )---------------------------- ");
+                int pageAtual = retornarPaginaAtual();
+                System.out.println(" pageAtual: " + pageAtual);
+                System.out.println(" index:     " + index);
+                if (index == pageAtual) {
+                    processar = true;
+                    System.out.println(" Processar: " + processar);
+                    //
+                    escreverTxt();
+                    //
+                    proximaPagina(index + 1);
+                } else {
+                    System.out.println("  Processando novamente a página: " + index);
+                    proximaPagina(index);
                 }
             }
+        }
+        fecharBufferEscrita();
+    }
+
+
+    public void fecharBufferEscrita() {
+        try {
+            escreve.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -97,8 +106,7 @@ public class Chrome {
 
 
     public void proximaPagina(int netxtPage) {
-        System.out.println("netxtPage: " + netxtPage);
-
+        System.out.println(" netxtPage: " + netxtPage);
         WebElement paginator = chrome.findElement(By.className("ui-paginator-pages"));
         List<WebElement> pages = paginator.findElements(By.tagName("a"));
         //
@@ -120,20 +128,33 @@ public class Chrome {
     }
 
 
-    public void escreverTxt(WebDriver navegador) {
-        List<WebElement> tabela = navegador.findElement(By.className("ui-datatable-tablewrapper"))
+    public void escreverTxt() {
+        List<WebElement> tabela = chrome.findElement(By.className("ui-datatable-tablewrapper"))
                 .findElements(By.tagName("tr"));
         System.out.println("Escrevendo...");
         System.out.println("");
-        //int cont = 0;
-//        for (WebElement objeto : tabela) {
-//            if (cont > 0) {
-//                registros++;
-//                System.out.println(registros + "  ->  " + objeto.getText());
-//            }
-//            cont++;
-//        }
-        System.out.println("Elementos escritos: " + tabela.size());
+        //
+        try {
+            escreve = new BufferedWriter(new FileWriter((TXT), true));
+            //
+            int cont = 0;
+            for (WebElement objeto : tabela) {
+                if (cont > 0) {
+                    registros++;
+                    String text = objeto.getText().trim();
+                    System.out.println(registros + "  ->  " + text);
+                    escreve.write(text);
+                    escreve.newLine();
+                    escreve.flush();
+                }
+                cont++;
+            }
+            //
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
         System.out.println("");
     }
 
