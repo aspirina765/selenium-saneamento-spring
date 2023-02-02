@@ -70,7 +70,7 @@ public class Chrome {
                         proximaPagina(index + 1);
                     } else {
                         System.out.println("  Processando novamente a página: " + index);
-                        proximaPagina(index + 1);
+                        proximaPagina(index);
                     }
                 }
             }
@@ -102,17 +102,13 @@ public class Chrome {
         WebElement paginator = chrome.findElement(By.className("ui-paginator-pages"));
         List<WebElement> pages = paginator.findElements(By.tagName("a"));
         //
-        System.out.println("paginator: " + paginator.getText());
-        //
         for (WebElement page : pages) {
             if (page.getText().equals("" + netxtPage)) {
-                System.out.println("netxtPage:" + netxtPage + "| " + page.getText() + " -> IGUAL");
                 page.click();
-                System.out.println("Clicou! ");
             }
         }
         System.out.println("");
-        aguardarSeconds(30);
+        aguardarSeconds(10);
     }
 
     public void aguardarSeconds(int seconds) {
