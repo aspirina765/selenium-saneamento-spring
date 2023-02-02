@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface BlueSoftService {
     void saveAll(List<BlueSoft> listaObj);
+
+    void save(BlueSoft blueSoft);
 }

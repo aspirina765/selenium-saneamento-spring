@@ -17,7 +17,7 @@ public class BlueSoft {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column
+    @Column(unique = true)
     private String barcode;
 
     @Column

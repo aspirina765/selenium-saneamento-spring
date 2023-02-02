@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BlueSoftServiceimpl implements BlueSoftService {
@@ -18,7 +19,19 @@ public class BlueSoftServiceimpl implements BlueSoftService {
     @Override
     @Transactional
     public void saveAll(List<BlueSoft> listaObj) {
-        repository.saveAll(listaObj);
+        for (BlueSoft blueSoft : listaObj) {
+            Optional<BlueSoft> option = repository.findByBarcode(blueSoft.getBarcode());
+            if (option.isEmpty()) {
+                repository.save(blueSoft);
+            } else {
+                System.out.println("Já existe cadastrado: " + blueSoft.getBarcode());
+            }
+        }
+    }
+
+    @Override
+    public void save(BlueSoft blueSoft) {
+        repository.save(blueSoft);
     }
 
 
