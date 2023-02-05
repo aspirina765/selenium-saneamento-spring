@@ -2,7 +2,6 @@ package net.cloudtecnologia;
 
 import net.cloudtecnologia.client.Chrome;
 import net.cloudtecnologia.service.impl.BlueSoftServiceimpl;
-import org.openqa.selenium.WebDriver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -25,10 +24,16 @@ public class RoboSaneamentoSpringApplication {
         return args -> {
             Chrome chrome = new Chrome();
             //
-            chrome.confiugurarChrome();
-            chrome.logarWlGestao();
-            chrome.acessarSaneamentoDeProdutos();
-            chrome.paginarTabela();
+            try {
+                chrome.confiugurarChrome();
+                chrome.logarWlGestao();
+                chrome.acessarSaneamentoDeProdutos();
+                chrome.paginarTabela();
+                chrome.encerrarNavegador();
+            } catch (Exception e) {
+                System.out.println("Erro inesperado!");
+                chrome.encerrarNavegador();
+            }
         };
     }
 

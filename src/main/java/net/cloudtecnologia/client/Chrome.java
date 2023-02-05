@@ -23,7 +23,7 @@ public class Chrome {
     private int registros;
     private static final String TXT = "C:\\Users\\thiago.melo\\Desktop\\SANEAMENTO.txt";
 
-    private static final int INDEX_START = 15;
+    private static final int INDEX_START = 1;
 
     WebDriver chrome;
     BufferedWriter escreve;
@@ -76,6 +76,7 @@ public class Chrome {
                 }
             }
         }
+        System.out.println("------------- CONCLUÍDO ----------------");
         fecharBufferEscrita();
     }
 
@@ -156,6 +157,12 @@ public class Chrome {
 
 
         System.out.println("");
+    }
+
+
+    public void encerrarNavegador() {
+        chrome.quit();
+        chrome.close();
     }
 
 }
