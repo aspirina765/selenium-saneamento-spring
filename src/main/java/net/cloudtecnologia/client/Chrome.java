@@ -24,6 +24,8 @@ public class Chrome {
     private static final String TXT = "C:\\Users\\thiago.melo\\Desktop\\SANEAMENTO.txt";
 
     private static final int INDEX_START = 1;
+    //  1800 -1 /  166
+    // 1800 2 76
 
     WebDriver chrome;
     BufferedWriter escreve;
@@ -32,7 +34,7 @@ public class Chrome {
         System.setProperty("webdriver.chrome.driver",
                 "C:\\Users\\thiago.melo\\Downloads\\chromedriver.exe");
         chrome = new org.openqa.selenium.chrome.ChromeDriver();
-        chrome.manage().timeouts().implicitlyWait(10, TimeUnit.MILLISECONDS);
+        chrome.manage().timeouts().implicitlyWait(30, TimeUnit.MILLISECONDS);
     }
 
     public void logarWlGestao() {
